@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Yıllık Oluştur - YEARLOG</title>
+  <link rel="stylesheet" href="style/style.css" />
+
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+</head>
+
+<body>
+  <div class="page-bg"></div>
+  <div class="form-container">
+
+
+  <!-- Yıllık Listesi Göster Butonu -->
+  <div style="width: 100%; text-align: center; margin: 1rem 0;">
+    <button id="showYearbookListBtn" style="
+      padding: 0.6rem 1.2rem;
+      background-color: #004aad;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: background-color 0.3s ease;">
+      Yıllık Listesini Göster
+    </button>
+    <!-- Sınıf Ekleme Formu -->
+    <h2>Sınıf Ekle</h2>
+    <form id="classForm">
+      <label for="className">Sınıf / Grup Adı</label>
+      <input type="text" id="className" placeholder="örneğin: 12-A veya Bilgisayar Grubu" required />
+      <button type="submit">Sınıfı Ekle</button>
+    </form>
+
+    <hr style="margin: 30px 0;" />
+
+    <!-- Yıllık Kişi Girişi -->
+    <h2>Yıllık Oluştur</h2>
+    <form id="yearbookForm">
+      <label for="classSelect">Sınıf Seç</label>
+      <select id="classSelect" required></select>
+
+      <label for="name">Ad</label>
+      <input type="text" id="name" required />
+
+      <label for="surname">Soyad</label>
+      <input type="text" id="surname" required />
+
+      <label for="nickname">Lakap</label>
+      <input type="text" id="nickname" required />
+
+      <label for="lesson">En Sevdiği Ders</label>
+      <input type="text" id="lesson" required />
+
+      <label for="note">Arkadaşlarına Not</label>
+      <textarea id="note" rows="4" required></textarea>
+
+      <label for="photo">Fotoğraf Ekle</label>
+      <input type="file" id="photo" accept="image/*" required />
+      <label for="video">Video Ekle (isteğe bağlı)</label>
+      <input type="file" id="video" accept="video/*">
+
+      <button type="submit">Yıllığı Oluştur</button>
+    </form>
+
+    <div id="preview" style="margin-top: 30px;"></div>
+    <button id="downloadPdf" style="display:none; margin-top: 20px;">PDF Olarak İndir</button>
+    <input type="text" id="shareLink" style="display:none; margin-top: 10px; width: 100%;" readonly />
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" style="
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #004aad;
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    display: none;
+    font-size: 1.4rem;
+    z-index: 9999;">Güncellendi!
+  </div>
+<div id="actionButtons" style="display: none;">
+  <a id="downloadLink" class="download-link" download>
+    📥 Yıllığı İndir (PDF)
+  </a>
+
+  <div class="share-buttons">
+    <p>Yıllığı paylaş:</p>
+
+    <a id="whatsappShare" target="_blank">WhatsApp ile Paylaş</a>
+    <a id="emailShare" target="_blank">E-posta ile Paylaş</a>
+    <button onclick="copyLink()">Linki Kopyala</button>
+  </div>
+</div>
+
+
+  <!-- Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+  const classSelect = document.getElementById("classSelect");
+  const downloadLink = document.getElementById("downloadLink");
+  const whatsappShare = document.getElementById("whatsappShare");
+  const emailShare = document.getElementById("emailShare");
+  const actionButtons = document.getElementById("actionButtons");
+
+  classSelect.addEventListener("change", () => {
+    const selectedClass = classSelect.value;
+
+    if (selectedClass) {
+      const fileUrl = `downloads/yillik-${selectedClass}.pdf`;
+      downloadLink.href = fileUrl;
+      whatsappShare.href = `https://wa.me/?text=http://localhost:3000/${fileUrl}`;
+      emailShare.href = `mailto:?subject=Yıllık&body=http://localhost:3000/${fileUrl}`;
+      actionButtons.style.display = "block";
+    } else {
+      actionButtons.style.display = "none";
+    }
+  });
+
+  function copyLink() {
+    const selectedClass = classSelect.value;
+    if (!selectedClass) return;
+
+    const fileUrl = `http://localhost:3000/downloads/yillik-${selectedClass}.pdf`;
+    navigator.clipboard.writeText(fileUrl).then(() => {
+      alert("Bağlantı panoya kopyalandı!");
+    });
+  }
+</script>
+
+  <!-- Main Script -->
+<script type="module" src="script.js/main.js"></script>
+</body>
+
+</html>
